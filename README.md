@@ -58,6 +58,25 @@ spectrum.plot()
 spectrum.barplot()
 ```
 
+### Comparative plot of two spectra
+To create a comparative plot of two spectra, where one spectrum is displayed with positive intensities and the other with negative, use the compare_plot method.
+```
+mz2 = [3.0, 3.5, 4.0, 4.5, 5.0]
+intensities2 = [8, 18, 12, 4, 9]
+substance_name2 = "Another Substance"
+metadata2 = {"id": "2", "molecular_formula": "H2O2", "molecular_weight": 34.0147}
+
+spectrum2 = Spectrum(mz2, intensities2, substance_name2, **metadata2)
+spectrum2.normalize()
+spectrum.compare_plot(spectrum2)
+```
+
+### Comparative bar plot of two spectra
+To create a comparative bar plot of two spectra, use the compare_barplot method.
+```
+spectrum.compare_barplot(spectrum2)
+```
+
 ### Apply a threshold to the intensities
 ```
 threshold = 0.05
@@ -90,6 +109,8 @@ Spectrum(mz, intensities, substance_name, **metadata)
 + `barplot()`: Plot the spectrum as a bar chart.
 + `apply_threshold(threshold)`: Set intensities below the threshold to zero.
 + `resample(step)`: Resample the spectrum with a new m/z step.
++ `spectrum.compare_plot(spectrum2)` : Comparative plot of spectrum and spectrum2
++ `spectrum.compare_barplot(spectrum2)` : Comparative bar plot of spectrum and spectrum2
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue to discuss any changes or improvements.
