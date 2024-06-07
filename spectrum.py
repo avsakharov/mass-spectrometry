@@ -21,8 +21,7 @@ class Spectrum:
         mz_max = np.ceil(self.mz.max())
         new_mz = np.arange(mz_min, mz_max + step, step)
         new_intensities = np.zeros(len(new_mz))
-        # Group the intensities into a new array mz with step and sum up
-        for i in range(1, len(new_mz)-1):
+        for i in range(1, len(new_mz)-1):  # Group the intensities into a new array mz with step and sum up
             mask = (self.mz >= new_mz[i-1]) & (self.mz < new_mz[i])
             new_intensities[i] = self.intensities[mask].sum()
         self.mz = new_mz
@@ -32,11 +31,11 @@ class Spectrum:
         self.intensities[self.intensities < threshold] = 0
 
     def plot(self):
-        plt.figure(figsize=(10, 6))
+        plt.figure(figsize=(12, 4))
         plt.plot(self.mz, self.intensities, label=self.substance_name)
         plt.xlabel('m/z')
         plt.ylabel('Intensity')
-        plt.title('Mass Spectrum')
+        plt.title(f'Mass Spectrum {self.substance_name}')
         plt.legend()
         plt.show()
 
@@ -45,6 +44,35 @@ class Spectrum:
         plt.bar(self.mz, self.intensities, width=0.5, edgecolor='none', label=self.substance_name)
         plt.xlabel('m/z')
         plt.ylabel('Intensity')
-        plt.title(f'Mass Spectrum (Bar Plot): {self.substance_name}')
+        plt.title(f'Mass Spectrum (Bar Plot) {self.substance_name}')
+        plt.legend()
+        plt.show()
+    
+    def compare_plot(self, other_spectrum):
+        if not isinstance(other_spectrum, Spectrum):
+            raise ValueError("The object to compare must be an instance of Spectrum class.")
+        plt.figure(figsize=(12, 4))
+        # Plotting the first spectrum with positive intensities
+        plt.plot(self.mz, self.intensities, color='blue', label=f'{self.substance_name} (Positive)')
+        # Plotting the second spectrum with negative intensities
+        plt.plot(other_spectrum.mz, -other_spectrum.intensities, color='red', label=f'{other_spectrum.substance_name} (Negative)')
+        plt.xlabel('m/z')
+        plt.ylabel('Intensity')
+        plt.title(f'Comparison of {self.substance_name} and {other_spectrum.substance_name}')
+        plt.legend()
+        plt.show()
+    
+    def compare_barplot(self, other_spectrum):
+        if not isinstance(other_spectrum, Spectrum):
+            raise ValueError("The object to compare must be an instance of Spectrum class.")
+        plt.figure(figsize=(12, 4))
+        # Plotting the first spectrum with positive intensities
+        plt.bar(self.mz, self.intensities, width=0.5, color='blue', edgecolor='none', label=f'{self.substance_name} (Positive)')
+        # Plotting the second spectrum with negative intensities
+        plt.bar(other_spectrum.mz, -other_spectrum.intensities, width=0.5, color='red', edgecolor='none',
+                label=f'{other_spectrum.substance_name} (Negative)')
+        plt.xlabel('m/z')
+        plt.ylabel('Intensity')
+        plt.title(f'Comparison of {self.substance_name} and {other_spectrum.substance_name}')
         plt.legend()
         plt.show()
