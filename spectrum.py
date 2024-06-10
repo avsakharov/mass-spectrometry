@@ -95,7 +95,7 @@ class Spectrum:
     def cosine_measures_list(self, spectra):
         cos_measures = []
         for spectrum in spectra:
-            cos_measure = self.cosine_measure(self, spectrum)
+            cos_measure = Spectrum.cosine_measure(self, spectrum)
             cos_measures.append({
                 'cm': cos_measure,
                 'id': spectrum.metadata.get('id'),
