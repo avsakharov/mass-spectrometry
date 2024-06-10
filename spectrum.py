@@ -92,7 +92,7 @@ class Spectrum:
         )
         return cos_measure
 
-    def calculate_cosine_measures(self, spectra):
+    def cosine_measures_list(self, spectra):
         cos_measures = []
         for spectrum in spectra:
             cos_measure = self.cosine_measure(self, spectrum)
