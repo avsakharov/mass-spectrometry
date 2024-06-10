@@ -124,7 +124,7 @@ Spectrum(mz, intensities, substance_name, **metadata)
 + `spectrum.compare_plot(spectrum2)` : Comparative plot of spectrum and spectrum2
 + `spectrum.compare_barplot(spectrum2)` : Comparative bar plot of spectrum and spectrum2
 + `Spectrum.cosine_measures_matrix_plot(spectra)` : Plot cosine similarity of spectrum in spectra
-+ `Spectrum.cosine_measure(mz1, intensities1, mz2, intensities2)`: Get cosine measures between intensities1 and intensities2
++ `Spectrum.cosine_measure(spectrum1, spectrum2)`: Calculate cosine measure between spectrum1 and spectrum2
 + `spectrum.calculate_cosine_measures(spectra)`: Calculate cosine measures between spectrum and spectra
 
 ## Contributing
