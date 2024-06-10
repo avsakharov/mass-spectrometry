@@ -79,14 +79,14 @@ class Spectrum:
         plt.show()
 
     @staticmethod
-    def cosine_measure(mz1, intensities1, mz2, intensities2):
-        common_mz = np.unique(np.concatenate((mz1, mz2)))
+    def cosine_measure(spectrum1, spectrum2):
+        common_mz = np.unique(np.concatenate((spectrum1.mz, spectrum2.mz)))
         common_intensities1 = np.zeros(len(common_mz))
         common_intensities2 = np.zeros(len(common_mz))
-        mask1 = np.isin(common_mz, mz1)
-        mask2 = np.isin(common_mz, mz2)
-        common_intensities1[mask1] = intensities1[np.where(np.isin(mz1, common_mz[mask1]))[0]]
-        common_intensities2[mask2] = intensities2[np.where(np.isin(mz2, common_mz[mask2]))[0]]
+        mask1 = np.isin(common_mz, spectrum1.mz)
+        mask2 = np.isin(common_mz, spectrum2.mz)
+        common_intensities1[mask1] = spectrum1.intensities[np.where(np.isin(spectrum1.mz, common_mz[mask1]))[0]]
+        common_intensities2[mask2] = spectrum2.intensities[np.where(np.isin(spectrum2.mz, common_mz[mask2]))[0]]
         cos_measure = np.dot(common_intensities1, common_intensities2) / (
             np.linalg.norm(common_intensities1) * np.linalg.norm(common_intensities2)
         )
@@ -95,7 +95,7 @@ class Spectrum:
     def calculate_cosine_measures(self, spectra):
         cos_measures = []
         for spectrum in spectra:
-            cos_measure = self.cosine_measure(self.mz, self.intensities, spectrum.mz, spectrum.intensities)
+            cos_measure = self.cosine_measure(self, spectrum)
             cos_measures.append({
                 'cm': cos_measure,
                 'id': spectrum.metadata.get('id'),
@@ -111,7 +111,7 @@ class Spectrum:
         names = [spectrum.substance_name for spectrum in spectra]  # Vertical and horizontal captions
         for i in range(n):
             for k in range(n):
-                cos_measure = Spectrum.cosine_measure(spectra[i].mz, spectra[i].intensities, spectra[k].mz, spectra[k].intensities)
+                cos_measure = Spectrum.cosine_measure(spectra[i], spectra[k])
                 cosine_measures_matrix[i, k] = cos_measure
         fig, ax = plt.subplots(figsize=(6.4, 4.8))
         ax.grid(False)
