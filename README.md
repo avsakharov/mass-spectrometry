@@ -1,6 +1,6 @@
 # Mass Spectrometry Data Analysis
 
-This repository contains code and scripts for processing and analyzing mass spectrometry data. It includes classes and methods for handling spectrum data, normalizing intensities, plotting spectra, and more.
+This repository contains code and scripts for processing and analyzing mass spectrometry data. It includes classes and methods for handling spectrum data, normalizing intensities, plotting spectra, compare spectra and more.
 
 ## Table of Contents
 + [Overview](##Overview)
@@ -89,6 +89,12 @@ step = 1
 spectrum.resample(step)
 ```
 
+### Plot cosine similarity matrix
+```
+spectra = [spectrum, spectrum2]
+Spectrum.cosine_similarity_matrix_plot(spectra)
+```
+
 ## Class Documentation
 
 ### Spectrum
@@ -111,6 +117,7 @@ Spectrum(mz, intensities, substance_name, **metadata)
 + `resample(step)`: Resample the spectrum with a new m/z step.
 + `spectrum.compare_plot(spectrum2)` : Comparative plot of spectrum and spectrum2
 + `spectrum.compare_barplot(spectrum2)` : Comparative bar plot of spectrum and spectrum2
++ `Spectrum.cosine_similarity_matrix_plot(spectra)` : Plot cosine similarity of spectrum in spectra
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue to discuss any changes or improvements.
