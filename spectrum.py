@@ -70,46 +70,61 @@ class Spectrum:
         plt.bar(self.mz, self.intensities, width=0.5, color='blue', edgecolor='none', label=f'{self.substance_name} (Positive)')
         # Plotting the second spectrum with negative intensities
         plt.bar(other_spectrum.mz, -other_spectrum.intensities, width=0.5, color='red', edgecolor='none',
-                label=f'{other_spectrum.substance_name} (Negative)')
+                label=f'{other_spectrum.substance_name} (Negative)'
+               )
         plt.xlabel('m/z')
         plt.ylabel('Intensity')
         plt.title(f'Comparison of {self.substance_name} and {other_spectrum.substance_name}')
         plt.legend()
         plt.show()
-        
-    
+
     @staticmethod
-    def cosine_similarity_matrix_plot(spectra):
+    def cosine_measure(mz1, intensities1, mz2, intensities2):
+        common_mz = np.unique(np.concatenate((mz1, mz2)))
+        common_intensities1 = np.zeros(len(common_mz))
+        common_intensities2 = np.zeros(len(common_mz))
+        mask1 = np.isin(common_mz, mz1)
+        mask2 = np.isin(common_mz, mz2)
+        common_intensities1[mask1] = intensities1[np.where(np.isin(mz1, common_mz[mask1]))[0]]
+        common_intensities2[mask2] = intensities2[np.where(np.isin(mz2, common_mz[mask2]))[0]]
+        cos_measure = np.dot(common_intensities1, common_intensities2) / (
+            np.linalg.norm(common_intensities1) * np.linalg.norm(common_intensities2)
+        )
+        return cos_measure
+
+    def calculate_cosine_measures(self, spectra):
+        cos_measures = []
+        for spectrum in spectra:
+            cos_measure = self.cosine_measure(self.mz, self.intensities, spectrum.mz, spectrum.intensities)
+            cos_measures.append({
+                'cm': cos_measure,
+                'id': spectrum.metadata.get('id'),
+                'substance_name': spectrum.substance_name
+            })
+
+        return cos_measures
+
+    @staticmethod
+    def cosine_measures_matrix_plot(spectra):
         n = len(spectra)
-        cosine_similarity_matrix = np.zeros((n, n))
+        cosine_measures_matrix = np.zeros((n, n))
         names = [spectrum.substance_name for spectrum in spectra]  # Vertical and horizontal captions
         for i in range(n):
             for k in range(n):
-                common_mz = np.unique(np.concatenate((spectra[i].mz, spectra[k].mz)))  # Combined array m/z
-                common_intensities_i = np.zeros(len(common_mz))
-                common_intensities_k = np.zeros(len(common_mz))
-                mask_i = np.isin(common_mz, spectra[i].mz)
-                mask_k = np.isin(common_mz, spectra[k].mz)
-                # Use the mask to select non-zero intensities
-                common_intensities_i[mask_i] = np.array(spectra[i].intensities)[np.where(spectra[i].mz == common_mz[mask_i])]
-                common_intensities_k[mask_k] = np.array(spectra[k].intensities)[np.where(spectra[k].mz == common_mz[mask_k])]
-                # Cosine measure
-                cos_measure = np.dot(common_intensities_i, common_intensities_k) / (
-                    np.linalg.norm(common_intensities_i) * np.linalg.norm(common_intensities_k))
-
-                cosine_similarity_matrix[i, k] = cos_measure
+                cos_measure = Spectrum.cosine_measure(spectra[i].mz, spectra[i].intensities, spectra[k].mz, spectra[k].intensities)
+                cosine_measures_matrix[i, k] = cos_measure
         fig, ax = plt.subplots(figsize=(6.4, 4.8))
         ax.grid(False)
         vmin=0
         vmax=1
-        plt.imshow(cosine_similarity_matrix, cmap='gray', aspect='auto', vmin=vmin, vmax=vmax)
+        plt.imshow(cosine_measures_matrix, cmap='gray', aspect='auto', vmin=vmin, vmax=vmax)
         for i in range(n):
             for k in range(n):
-                cell_value = round(cosine_similarity_matrix[i, k], 2)
+                cell_value = round(cosine_measures_matrix[i, k], 2)
                 cell_color = 'white' if cell_value < (vmax - vmin)/2 else 'black'
                 text = ax.text(i, k, cell_value, ha="center", va="center", color=cell_color, fontsize=8)  # Подписи ячеек
-        plt.colorbar(label='Cosine similarity measure')
-        plt.title('Cosine similarity matrix of spectra')
+        plt.colorbar(label='Cosine measure')
+        plt.title('Cosine measures matrix of spectra')
         plt.xticks(range(n), names, rotation=45, ha='right')
         plt.yticks(range(n), names)
         plt.tight_layout()
