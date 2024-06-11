@@ -123,9 +123,9 @@ Spectrum(mz, intensities, substance_name, **metadata)
 + `resample(step)`: Resample the spectrum with a new m/z step.
 + `spectrum.compare_plot(spectrum2)` : Comparative plot of spectrum and spectrum2
 + `spectrum.compare_barplot(spectrum2)` : Comparative bar plot of spectrum and spectrum2
-+ `Spectrum.cosine_measures_matrix_plot(spectra)` : Plot cosine similarity of spectrum in spectra
 + `Spectrum.cosine_measure(spectrum1, spectrum2)`: Calculate cosine measure between spectrum1 and spectrum2
-+ `spectrum.calculate_cosine_measures(spectra)`: Calculate cosine measures between spectrum and spectra
++ `spectrum.cosine_measures_list(spectra)`: Calculate cosine measures between spectrum and spectra
++ `Spectrum.cosine_measures_matrix_plot(spectra)` : Plot cosine similarity of spectrum in spectra
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue to discuss any changes or improvements.
