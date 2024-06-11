@@ -93,16 +93,16 @@ class Spectrum:
         return cos_measure
 
     def cosine_measures_list(self, spectra):
-        cos_measures = []
+        cos_measures_list = []
         for spectrum in spectra:
             cos_measure = Spectrum.cosine_measure(self, spectrum)
-            cos_measures.append({
+            cos_measures_list.append({
                 'cm': cos_measure,
                 'id': spectrum.metadata.get('id'),
                 'substance_name': spectrum.substance_name
             })
 
-        return cos_measures
+        return cos_measures_list
 
     @staticmethod
     def cosine_measures_matrix_plot(spectra):
