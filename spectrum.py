@@ -1,6 +1,8 @@
 # spectrum.py
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
+sns.set_theme()
 
 class Spectrum:
     def __init__(self, mz, intensities, substance_name, **metadata):
@@ -113,16 +115,16 @@ class Spectrum:
             for k in range(n):
                 cos_measure = Spectrum.cosine_measure(spectra[i], spectra[k])
                 cosine_measures_matrix[i, k] = cos_measure
-        fig, ax = plt.subplots(figsize=(6.4, 4.8))
+        fig, ax = plt.subplots(figsize=(6, 4.5))
         ax.grid(False)
         vmin=0
         vmax=1
-        plt.imshow(cosine_measures_matrix, cmap='gray', aspect='auto', vmin=vmin, vmax=vmax)
+        plt.imshow(cosine_measures_matrix, cmap='copper', aspect='equal', vmin=vmin, vmax=vmax)
         for i in range(n):
             for k in range(n):
                 cell_value = round(cosine_measures_matrix[i, k], 2)
                 cell_color = 'white' if cell_value < (vmax - vmin)/2 else 'black'
-                text = ax.text(i, k, cell_value, ha="center", va="center", color=cell_color, fontsize=8)  # Подписи ячеек
+                text = ax.text(i, k, cell_value, ha="center", va="center", color=cell_color, fontsize=8)  # Cell signatures
         plt.colorbar(label='Cosine measure')
         plt.title('Cosine measures matrix of spectra')
         plt.xticks(range(n), names, rotation=45, ha='right')
