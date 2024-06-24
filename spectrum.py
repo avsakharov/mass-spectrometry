@@ -117,15 +117,9 @@ class Spectrum:
 
     @staticmethod
     def cosine_measure(spectrum1, spectrum2):
-        common_mz = np.unique(np.concatenate((spectrum1.mz, spectrum2.mz)))
-        common_intensities1 = np.zeros(len(common_mz))
-        common_intensities2 = np.zeros(len(common_mz))
-        mask1 = np.isin(common_mz, spectrum1.mz)
-        mask2 = np.isin(common_mz, spectrum2.mz)
-        common_intensities1[mask1] = spectrum1.intensities[np.where(np.isin(spectrum1.mz, common_mz[mask1]))[0]]
-        common_intensities2[mask2] = spectrum2.intensities[np.where(np.isin(spectrum2.mz, common_mz[mask2]))[0]]
-        cos_measure = np.dot(common_intensities1, common_intensities2) / (
-            np.linalg.norm(common_intensities1) * np.linalg.norm(common_intensities2)
+        spectrum1, spectrum2 = Spectrum.merge_and_align_spectra(spectrum1, spectrum2)
+        cos_measure = np.dot(spectrum1.intensities, spectrum2.intensities) / (
+            np.linalg.norm(spectrum1.intensities) * np.linalg.norm(spectrum2.intensities)
         )
         return cos_measure
 
