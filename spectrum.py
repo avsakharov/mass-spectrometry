@@ -17,7 +17,7 @@ class Spectrum:
         max_intensity = np.max(self.intensities)
         self.intensities = (self.intensities - min_intensity) / (max_intensity - min_intensity)
     
-    def resample(self, step):
+    def resample(self, step=1):
         # Changing the sampling step
         mz_min = np.floor(self.mz.min())
         mz_max = np.ceil(self.mz.max())
@@ -29,9 +29,44 @@ class Spectrum:
         self.mz = new_mz
         self.intensities = new_intensities
     
-    def apply_threshold(self, threshold):  # Cutting off values below the threshold
-        self.intensities[self.intensities < threshold] = 0
+    def apply_threshold(self, threshold=0.001):  # Cutting off values below the threshold
+        non_zero_mask = self.intensities >= threshold
+        self.mz = self.mz[non_zero_mask]
+        self.intensities = self.intensities[non_zero_mask]
+    
+    @staticmethod
+    def merge_and_align_spectra(spectrum1, spectrum2):
+        # Combine arrays spectrum1.mz and spectrum2.mz into array common_mz and get spectrum intensities
+        common_mz = np.unique(np.concatenate((spectrum1.mz, spectrum2.mz)))
+        intensities1 = np.zeros(len(common_mz))
+        intensities2 = np.zeros(len(common_mz))
+        mask1 = np.isin(common_mz, spectrum1.mz)
+        mask2 = np.isin(common_mz, spectrum2.mz)
+        intensities1[mask1] = spectrum1.intensities[np.where(spectrum1.mz == common_mz[mask1])[0]]
+        intensities2[mask2] = spectrum2.intensities[np.where(spectrum2.mz == common_mz[mask2])[0]]
+        spectrum1.mz = common_mz
+        spectrum1.intensities = intensities1
+        spectrum2.mz = common_mz
+        spectrum2.intensities = intensities2
+        return spectrum1, spectrum2
 
+    def background_subtraction(self, spectrum_bg):  # Subtract the background spectrum from the database spectrum
+        self, spectrum_bg = Spectrum.merge_and_align_spectra(self, spectrum_bg)
+        self.intensities = np.maximum(self.intensities - spectrum_bg.intensities, 0)
+        
+    def to_dict(self):
+        data = {
+            'cas': self.metadata.get('cas', ''),
+            'substance_name': self.substance_name,
+            'other_names': self.metadata.get('other_names', ''),
+            'molecular_formula': self.metadata.get('molecular_formula', ''),
+            'monoisotopic_mass': self.metadata.get('monoisotopic_mass', ''),
+            'array_length': len(self.mz),
+            'mz': list(self.mz),
+            'intensities': list(self.intensities)
+        }
+        return data
+    
     def plot(self):
         plt.figure(figsize=(12, 4))
         plt.plot(self.mz, self.intensities, label=self.substance_name)
@@ -115,7 +150,7 @@ class Spectrum:
             for k in range(n):
                 cos_measure = Spectrum.cosine_measure(spectra[i], spectra[k])
                 cosine_measures_matrix[i, k] = cos_measure
-        fig, ax = plt.subplots(figsize=(6, 4.5))
+        fig, ax = plt.subplots(figsize=(12, 9))
         ax.grid(False)
         vmin=0
         vmax=1
