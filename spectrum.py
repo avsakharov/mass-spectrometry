@@ -1,5 +1,10 @@
 # spectrum.py
+import os
+import glob
 import numpy as np
+import pandas as pd
+from pyteomics import mzml  # Library used to open mzml format files (spectra format)
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set_theme()
@@ -160,3 +165,74 @@ class Spectrum:
         plt.yticks(range(n), names)
         plt.tight_layout()
         plt.show()
+
+
+class SpectrumLoader:
+    def __init__(self, step=1):
+        self.step = step
+
+    def load_spectra_from_mzml(self, folder_path, metadata_df=None):
+        mzml_files = glob.glob(os.path.join(folder_path, '*.mzml'))
+        spectra = []
+
+        for file_path in mzml_files:
+            file_name = os.path.splitext(os.path.basename(file_path))[0]
+            ms_data = mzml.read(file_path)
+            spectrum_data = list(ms_data)[0]
+
+            mz = spectrum_data.pop('m/z array')
+            intensities = spectrum_data.pop('intensity array')
+
+            if metadata_df is not None:
+                metadata = metadata_df.loc[file_name].to_dict()
+                substance_name = metadata.pop('substance_name')
+            else:
+                metadata = {'file_name': file_name}
+                substance_name = 'Unknown substance'
+
+            spectrum = Spectrum(mz, intensities, substance_name, **metadata)
+            spectrum.resample(self.step)
+            spectra.append(spectrum)
+
+        return spectra
+
+    def load_background_spectrum(self, file_path):
+        ms_data = mzml.read(file_path)
+        spectrum_data = list(ms_data)[0]
+
+        mz = spectrum_data.pop('m/z array')
+        intensities = spectrum_data.pop('intensity array')
+        metadata = {}
+        substance_name = 'Air'
+
+        spectrum = Spectrum(mz, intensities, substance_name, **metadata)
+        spectrum.resample(self.step)
+
+        return spectrum
+
+    def load_spectra_from_txt(self, folder_path):
+        file_list = os.listdir(folder_path)
+        spectra = []
+
+        for file in file_list:
+            if file.endswith('.txt'):
+                file_path = os.path.join(folder_path, file)
+                with open(file_path, 'r') as f:
+                    lines = f.readlines()
+                    file_data = {}
+                    for line in lines:
+                        key, value = line.strip().split(': ')
+                        if key in ['mz', 'intensities']:
+                            value = [float(v) for v in value[1:-1].split(', ')]
+                        elif key == 'array_length':
+                            value = int(value)
+                        file_data[key] = value
+
+                    mz = file_data.pop('mz')
+                    intensities = file_data.pop('intensities')
+                    substance_name = file_data.pop('substance_name')
+
+                    spectrum = Spectrum(mz, intensities, substance_name, **file_data)
+                    spectra.append(spectrum)
+
+        return spectra
