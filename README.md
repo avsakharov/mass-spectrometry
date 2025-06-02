@@ -114,4 +114,4 @@ Contributions are welcome! Please feel free to submit a Pull Request or open an 
 
 ## Libraries used
 
-pandas, pyteomics, matplotlib, seaborn, os, requests, io, sys, scikit-learn, glob
+pandas, pyteomics, matplotlib, seaborn, os, requests, io, sys, sklearn, glob
