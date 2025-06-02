@@ -110,3 +110,8 @@ test_spectrum.calculate_cosine_measures(spectra)
 
 ## Contributing
 Contributions are welcome! Please feel free to submit a Pull Request or open an Issue to discuss any changes or improvements.
+
+
+## Libraries used
+
+pandas, pyteomics, matplotlib, seaborn, os, requests, io, sys, scikit-learn, glob
