@@ -2,16 +2,10 @@
 
 This repository contains tools and scripts for processing mass spectrometry data. The main features include loading and preprocessing spectra, background subtraction, resampling, and identifying substances based on spectral data.
 
-<p align="left">
+<p align="center">
   <img src="images/distribution_of_cosine_measures.png" alt="Distribution of Cosine Measures" width="900"/>
-</p>
-<p align="left">
   <img src="images/cosine_measures_matrix.png" alt="Cosine Measures Matrix" width="900"/>
-</p>
-<p align="left">
   <img src="images/heat_map_of_intensities.png" alt="Heat Map of Intensities" width="900"/>
-</p>
-<p align="left">
   <img src="images/chromatogram.png" alt="Chromatogram" width="900"/>
 </p>
 
